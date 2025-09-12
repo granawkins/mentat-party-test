@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 
@@ -107,7 +107,7 @@ describe('App Component', () => {
 
     // Mock POST request
     (globalThis.fetch as unknown as Mock).mockImplementation(
-      (url: string, options?: any) => {
+      (url: string, options?: RequestInit) => {
         if (url === '/api/messages' && options?.method === 'POST') {
           return Promise.resolve(
             mockPostResponse({
