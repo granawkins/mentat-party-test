@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { KeyboardEvent } from 'react';
 import mentatLogo from '/mentat.png';
 
 interface Message {
@@ -59,7 +60,7 @@ function App() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (!isUsernameSet) {
         if (username.trim()) {

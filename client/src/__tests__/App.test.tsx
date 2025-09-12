@@ -77,7 +77,8 @@ describe('App Component', () => {
 
     // Should now show the chat interface
     await waitFor(() => {
-      expect(screen.getByText(/Welcome, TestUser!/)).toBeInTheDocument();
+      expect(screen.getByText(/Welcome,/)).toBeInTheDocument();
+      expect(screen.getByText('TestUser')).toBeInTheDocument();
     });
   });
 
