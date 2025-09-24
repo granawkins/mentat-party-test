@@ -1,23 +1,22 @@
 import { useState } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
+import type { Square } from 'chess.js';
 
 function ChessGame() {
   const [game, setGame] = useState(new Chess());
-  const [gamePosition, setGamePosition] = useState(game.fen());
 
-  function makeAMove(move: any) {
+  function makeAMove(move: { from: string; to: string; promotion?: string }) {
     const gameCopy = new Chess(game.fen());
     const result = gameCopy.move(move);
     if (result) {
       setGame(gameCopy);
-      setGamePosition(gameCopy.fen());
       return true;
     }
     return false;
   }
 
-  function onDrop(sourceSquare: string, targetSquare: string) {
+  function onDrop(sourceSquare: Square, targetSquare: Square) {
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
@@ -32,7 +31,6 @@ function ChessGame() {
   function resetGame() {
     const newGame = new Chess();
     setGame(newGame);
-    setGamePosition(newGame.fen());
   }
 
   return (
@@ -54,7 +52,7 @@ function ChessGame() {
         }}
       >
         <Chessboard
-          position={gamePosition}
+          position={game.fen()}
           onPieceDrop={onDrop}
           boardWidth={400}
         />
