@@ -33,7 +33,7 @@ body::before {
     );
   background-size: 100px 100px;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
 }
 
 /* Add floating particles animation */
@@ -74,7 +74,14 @@ body::after {
   background-size: 200px 100px;
   animation: float 20s linear infinite;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    animation: none;
+  }
 }
 
 @keyframes float {

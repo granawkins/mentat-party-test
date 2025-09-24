@@ -156,6 +156,8 @@ function App() {
         padding: '20px',
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        position: 'relative',
+        zIndex: 1,
       }}
     >
       {/* Tab Navigation */}
