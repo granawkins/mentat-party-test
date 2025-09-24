@@ -51,12 +51,26 @@ function ChessGame() {
         padding: '20px',
       }}
     >
-      <h2 style={{ color: '#1f2937', marginBottom: '10px' }}>Chess Game</h2>
+      <h2
+        style={{
+          color: '#e2e8f0',
+          marginBottom: '10px',
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        Chess Game
+      </h2>
 
       <div
         style={{
           width: '400px',
           maxWidth: '90vw',
+          padding: '20px',
+          background: 'rgba(30, 41, 59, 0.6)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          borderRadius: '16px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
         }}
       >
         <Chessboard
@@ -68,25 +82,57 @@ function ChessGame() {
         />
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '15px',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}
+      >
         <button
           onClick={resetGame}
           style={{
-            padding: '8px 16px',
-            backgroundColor: '#3b82f6',
+            padding: '10px 20px',
+            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
             color: 'white',
-            border: 'none',
-            borderRadius: '6px',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '8px',
             cursor: 'pointer',
             fontSize: '14px',
+            fontWeight: '500',
+            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow =
+              '0 6px 16px rgba(59, 130, 246, 0.4)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow =
+              '0 4px 12px rgba(59, 130, 246, 0.3)';
           }}
         >
           New Game
         </button>
 
-        <div style={{ fontSize: '14px', color: '#6b7280' }}>
+        <div
+          style={{
+            fontSize: '14px',
+            color: '#e2e8f0',
+            textAlign: 'center',
+            padding: '8px 12px',
+            background: 'rgba(51, 65, 85, 0.6)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '8px',
+            minWidth: '180px',
+          }}
+        >
           {game.isGameOver() ? (
-            <span style={{ color: '#dc2626', fontWeight: '500' }}>
+            <span style={{ color: '#f87171', fontWeight: '500' }}>
               Game Over!{' '}
               {game.isCheckmate() ? 'Checkmate!' : game.isDraw() ? 'Draw!' : ''}
             </span>
@@ -94,7 +140,7 @@ function ChessGame() {
             <span>
               {game.turn() === 'w' ? 'White' : 'Black'} to move
               {game.isCheck() && (
-                <span style={{ color: '#dc2626' }}> (Check!)</span>
+                <span style={{ color: '#fbbf24' }}> (Check!)</span>
               )}
             </span>
           )}

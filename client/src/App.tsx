@@ -79,13 +79,13 @@ function App() {
                 style={{
                   fontWeight: '500',
                   fontSize: '14px',
-                  color: '#1f2937',
+                  color: '#e2e8f0',
                   marginBottom: '4px',
                 }}
               >
                 {title}
               </div>
-              <div style={{ fontSize: '12px', color: '#6b7280' }}>{techs}</div>
+              <div style={{ fontSize: '12px', color: '#94a3b8' }}>{techs}</div>
             </div>
           ))}
         </div>
@@ -96,21 +96,21 @@ function App() {
             style={{
               fontSize: '14px',
               fontWeight: '500',
-              color: '#1f2937',
+              color: '#e2e8f0',
               marginBottom: '8px',
             }}
           >
             Message from server:
           </div>
-          <div style={{ fontSize: '14px', color: '#1f2937' }}>
+          <div style={{ fontSize: '14px', color: '#e2e8f0' }}>
             {loading ? (
               'Loading message from server...'
             ) : error ? (
-              <span style={{ color: '#dc2626' }}>Error: {error}</span>
+              <span style={{ color: '#f87171' }}>Error: {error}</span>
             ) : message ? (
               message
             ) : (
-              <span style={{ color: '#6b7280', fontStyle: 'italic' }}>
+              <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>
                 No message from server
               </span>
             )}
@@ -122,17 +122,18 @@ function App() {
           style={{
             textAlign: 'center',
             fontSize: '14px',
-            color: '#6b7280',
+            color: '#94a3b8',
           }}
         >
           Create a new GitHub issue and tag{' '}
           <code
             style={{
-              backgroundColor: '#f8fafc',
+              backgroundColor: 'rgba(51, 65, 85, 0.8)',
+              border: '1px solid rgba(148, 163, 184, 0.3)',
               padding: '2px 6px',
               borderRadius: '4px',
               fontSize: '13px',
-              color: '#1f2937',
+              color: '#e2e8f0',
             }}
           >
             @MentatBot
@@ -146,7 +147,6 @@ function App() {
   return (
     <div
       style={{
-        backgroundColor: '#fafafa',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -164,9 +164,12 @@ function App() {
           display: 'flex',
           gap: '2px',
           marginBottom: '20px',
-          backgroundColor: '#e5e7eb',
+          backgroundColor: 'rgba(30, 41, 59, 0.8)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
           borderRadius: '8px',
           padding: '4px',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
         }}
       >
         <button
@@ -178,10 +181,14 @@ function App() {
             cursor: 'pointer',
             fontSize: '14px',
             fontWeight: '500',
-            backgroundColor: activeTab === 'home' ? '#ffffff' : 'transparent',
-            color: activeTab === 'home' ? '#1f2937' : '#6b7280',
+            backgroundColor:
+              activeTab === 'home' ? 'rgba(59, 130, 246, 0.8)' : 'transparent',
+            color: activeTab === 'home' ? '#ffffff' : '#cbd5e1',
             boxShadow:
-              activeTab === 'home' ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none',
+              activeTab === 'home'
+                ? '0 2px 8px rgba(59, 130, 246, 0.3)'
+                : 'none',
+            transition: 'all 0.2s ease',
           }}
         >
           Home
@@ -195,10 +202,14 @@ function App() {
             cursor: 'pointer',
             fontSize: '14px',
             fontWeight: '500',
-            backgroundColor: activeTab === 'chess' ? '#ffffff' : 'transparent',
-            color: activeTab === 'chess' ? '#1f2937' : '#6b7280',
+            backgroundColor:
+              activeTab === 'chess' ? 'rgba(59, 130, 246, 0.8)' : 'transparent',
+            color: activeTab === 'chess' ? '#ffffff' : '#cbd5e1',
             boxShadow:
-              activeTab === 'chess' ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none',
+              activeTab === 'chess'
+                ? '0 2px 8px rgba(59, 130, 246, 0.3)'
+                : 'none',
+            transition: 'all 0.2s ease',
           }}
         >
           Chess
