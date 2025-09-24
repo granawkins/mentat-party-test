@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import mentatLogo from '/mentat.png';
+import ChessGame from './Chess';
 
 function App() {
+  const [activeTab, setActiveTab] = useState<'home' | 'chess'>('home');
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,21 +35,8 @@ function App() {
     fetchBackendMessage();
   }, []);
 
-  return (
-    <div
-      style={{
-        backgroundColor: '#fafafa',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: '100vh',
-        width: '100vw',
-        justifyContent: 'center',
-        padding: '20px',
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      }}
-    >
+  const renderHomeContent = () => (
+    <>
       {/* Logo */}
       <div>
         <a href="https://mentat.ai" target="_blank">
@@ -81,7 +70,11 @@ function App() {
             ['Backend', 'Node.js, Express, Jest'],
             ['Utilities', 'TypeScript, ESLint, Prettier'],
           ].map(([title, techs]) => (
-            <div className="section" style={{ textAlign: 'center' }} key={title}>
+            <div
+              className="section"
+              style={{ textAlign: 'center' }}
+              key={title}
+            >
               <div
                 style={{
                   fontWeight: '500',
@@ -147,6 +140,73 @@ function App() {
           to get started.
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <div
+      style={{
+        backgroundColor: '#fafafa',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        height: '100vh',
+        width: '100vw',
+        justifyContent: 'center',
+        padding: '20px',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      }}
+    >
+      {/* Tab Navigation */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '2px',
+          marginBottom: '20px',
+          backgroundColor: '#e5e7eb',
+          borderRadius: '8px',
+          padding: '4px',
+        }}
+      >
+        <button
+          onClick={() => setActiveTab('home')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+            backgroundColor: activeTab === 'home' ? '#ffffff' : 'transparent',
+            color: activeTab === 'home' ? '#1f2937' : '#6b7280',
+            boxShadow:
+              activeTab === 'home' ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none',
+          }}
+        >
+          Home
+        </button>
+        <button
+          onClick={() => setActiveTab('chess')}
+          style={{
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+            backgroundColor: activeTab === 'chess' ? '#ffffff' : 'transparent',
+            color: activeTab === 'chess' ? '#1f2937' : '#6b7280',
+            boxShadow:
+              activeTab === 'chess' ? '0 1px 3px rgba(0, 0, 0, 0.1)' : 'none',
+          }}
+        >
+          Chess
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'home' ? renderHomeContent() : <ChessGame />}
     </div>
   );
 }
