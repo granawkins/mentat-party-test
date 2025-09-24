@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
-import type { Square } from 'chess.js';
 
 function ChessGame() {
   const [game, setGame] = useState(new Chess());
@@ -16,7 +15,16 @@ function ChessGame() {
     return false;
   }
 
-  function onDrop(sourceSquare: Square, targetSquare: Square) {
+  function onPieceDrop({
+    sourceSquare,
+    targetSquare,
+  }: {
+    sourceSquare: string;
+    targetSquare: string | null;
+  }) {
+    // If targetSquare is null, it's not a valid drop
+    if (!targetSquare) return false;
+
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
@@ -52,9 +60,11 @@ function ChessGame() {
         }}
       >
         <Chessboard
-          position={game.fen()}
-          onPieceDrop={onDrop}
-          boardWidth={400}
+          options={{
+            position: game.fen(),
+            onPieceDrop: onPieceDrop,
+            allowDragging: true,
+          }}
         />
       </div>
 
