@@ -9,6 +9,11 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Log landing page load with timestamp
+    console.log(`Landing page loaded at: ${new Date().toISOString()}`);
+  }, []);
+
+  useEffect(() => {
     const fetchBackendMessage = async () => {
       setLoading(true);
       setError(null);
