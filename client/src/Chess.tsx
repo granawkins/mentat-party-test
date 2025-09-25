@@ -3,6 +3,7 @@ import { Chessboard } from 'react-chessboard';
 import { Chess } from 'chess.js';
 
 function ChessGame() {
+  console.log('Chess game component rendered');
   const [game, setGame] = useState(new Chess());
 
   function makeAMove(move: { from: string; to: string; promotion?: string }) {
