@@ -7,6 +7,17 @@ export const app = express();
 export const PORT = process.env.PORT || 5000;
 export const CLIENT_DIST_PATH = path.join(__dirname, '../../client/dist');
 
+// In-memory storage for comments
+interface Comment {
+  id: number;
+  text: string;
+  timestamp: string;
+  author: string;
+}
+
+const comments: Comment[] = [];
+let nextCommentId = 1;
+
 // Middleware
 app.use(cors()); // Enable CORS for frontend communication
 app.use(express.json()); // Parse JSON bodies
@@ -15,6 +26,29 @@ app.use(express.static(CLIENT_DIST_PATH)); // Serve static files from client/dis
 // Basic route
 app.get('/api', (req: Request, res: Response) => {
   res.json({ message: 'Welcome to the Mentat API!' });
+});
+
+// Comments API endpoints
+app.get('/api/comments', (req: Request, res: Response) => {
+  res.json({ comments });
+});
+
+app.post('/api/comments', (req: Request, res: Response) => {
+  const { text, author } = req.body;
+
+  if (!text || !author) {
+    return res.status(400).json({ error: 'Text and author are required' });
+  }
+
+  const newComment: Comment = {
+    id: nextCommentId++,
+    text: text.trim(),
+    author: author.trim(),
+    timestamp: new Date().toISOString(),
+  };
+
+  comments.push(newComment);
+  res.status(201).json({ comment: newComment });
 });
 
 // Serve React app or fallback page
