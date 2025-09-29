@@ -2,11 +2,25 @@ import { useState, useEffect } from 'react';
 import mentatLogo from '/mentat.png';
 import ChessGame from './Chess';
 
+interface Comment {
+  id: number;
+  text: string;
+  timestamp: string;
+  author: string;
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'chess'>('home');
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Comment state
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newCommentText, setNewCommentText] = useState('');
+  const [authorName, setAuthorName] = useState('');
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   useEffect(() => {
     // Log landing page load with timestamp
@@ -39,6 +53,63 @@ function App() {
 
     fetchBackendMessage();
   }, []);
+
+  // Fetch comments on component mount
+  useEffect(() => {
+    const fetchComments = async () => {
+      setCommentsLoading(true);
+      try {
+        const response = await fetch('/api/comments');
+        if (response.ok) {
+          const data = await response.json();
+          setComments(data.comments);
+        }
+      } catch (err) {
+        console.error('Error fetching comments:', err);
+      } finally {
+        setCommentsLoading(false);
+      }
+    };
+
+    fetchComments();
+  }, []);
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newCommentText.trim() || !authorName.trim()) {
+      return;
+    }
+
+    setSubmitLoading(true);
+    try {
+      const response = await fetch('/api/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: newCommentText,
+          author: authorName,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setComments((prev) => [...prev, data.comment]);
+        setNewCommentText('');
+        // Keep author name for convenience
+      }
+    } catch (err) {
+      console.error('Error submitting comment:', err);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString();
+  };
 
   const renderHomeContent = () => (
     <>
@@ -143,6 +214,154 @@ function App() {
             @MentatBot
           </code>{' '}
           to get started.
+        </div>
+
+        {/* Comments Section */}
+        <div className="section">
+          <h3
+            style={{
+              fontSize: '16px',
+              fontWeight: '600',
+              marginBottom: '16px',
+              color: '#1f2937',
+            }}
+          >
+            Comments
+          </h3>
+
+          {/* Comment Form */}
+          <form onSubmit={handleSubmitComment} style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <input
+                type="text"
+                placeholder="Your name"
+                value={authorName}
+                onChange={(e) => setAuthorName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  marginBottom: '8px',
+                }}
+                required
+              />
+              <textarea
+                placeholder="Write a comment..."
+                value={newCommentText}
+                onChange={(e) => setNewCommentText(e.target.value)}
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  fontFamily: 'inherit',
+                }}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={
+                submitLoading || !newCommentText.trim() || !authorName.trim()
+              }
+              style={{
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: submitLoading ? 'not-allowed' : 'pointer',
+                opacity:
+                  submitLoading || !newCommentText.trim() || !authorName.trim()
+                    ? 0.6
+                    : 1,
+              }}
+            >
+              {submitLoading ? 'Posting...' : 'Post Comment'}
+            </button>
+          </form>
+
+          {/* Comments List */}
+          <div>
+            {commentsLoading ? (
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: '#6b7280',
+                  textAlign: 'center',
+                }}
+              >
+                Loading comments...
+              </div>
+            ) : comments.length === 0 ? (
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: '#6b7280',
+                  textAlign: 'center',
+                }}
+              >
+                No comments yet. Be the first to comment!
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                {comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    style={{
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      padding: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontWeight: '500',
+                          fontSize: '14px',
+                          color: '#1f2937',
+                        }}
+                      >
+                        {comment.author}
+                      </span>
+                      <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                        {formatTimestamp(comment.timestamp)}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: '#374151',
+                        lineHeight: '1.5',
+                      }}
+                    >
+                      {comment.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
