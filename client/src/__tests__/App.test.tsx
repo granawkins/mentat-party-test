@@ -7,10 +7,19 @@ type ApiResponse = {
   message: string;
 };
 
+type CommentsResponse = {
+  comments: Array<{
+    id: number;
+    text: string;
+    timestamp: string;
+    author: string;
+  }>;
+};
+
 // Mock the fetch API
 globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
-function mockFetchResponse(data: ApiResponse) {
+function mockFetchResponse(data: ApiResponse | CommentsResponse) {
   return {
     json: vi.fn().mockResolvedValue(data),
     ok: true,
@@ -20,10 +29,17 @@ function mockFetchResponse(data: ApiResponse) {
 describe('App Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Default mock implementation
-    (globalThis.fetch as unknown as Mock).mockResolvedValue(
-      mockFetchResponse({ message: 'Test Message from API' })
-    );
+    // Default mock implementation for multiple endpoints
+    (globalThis.fetch as unknown as Mock).mockImplementation((url: string) => {
+      if (url === '/api') {
+        return Promise.resolve(
+          mockFetchResponse({ message: 'Test Message from API' })
+        );
+      } else if (url === '/api/comments') {
+        return Promise.resolve(mockFetchResponse({ comments: [] }));
+      }
+      return Promise.reject(new Error('Unknown endpoint'));
+    });
   });
 
   it('renders App component correctly', () => {
@@ -51,16 +67,68 @@ describe('App Component', () => {
   });
 
   it('handles API error', async () => {
-    // Mock a failed API call
-    (globalThis.fetch as unknown as Mock).mockRejectedValue(
-      new Error('API Error')
-    );
+    // Mock a failed API call for the main API endpoint
+    (globalThis.fetch as unknown as Mock).mockImplementation((url: string) => {
+      if (url === '/api') {
+        return Promise.reject(new Error('API Error'));
+      } else if (url === '/api/comments') {
+        return Promise.resolve(mockFetchResponse({ comments: [] }));
+      }
+      return Promise.reject(new Error('Unknown endpoint'));
+    });
 
     render(<App />);
 
     // Wait for the error message to appear
     await waitFor(() => {
       expect(screen.getByText(/Error: API Error/)).toBeInTheDocument();
+    });
+  });
+
+  it('renders comments section', async () => {
+    render(<App />);
+
+    // Wait for the component to load
+    await waitFor(() => {
+      expect(screen.getByText('Comments')).toBeInTheDocument();
+    });
+
+    expect(screen.getByPlaceholderText('Your name')).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText('Write a comment...')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('No comments yet. Be the first to comment!')
+    ).toBeInTheDocument();
+  });
+
+  it('displays existing comments', async () => {
+    const mockComments = [
+      {
+        id: 1,
+        text: 'This is a test comment',
+        author: 'Test User',
+        timestamp: '2023-01-01T00:00:00.000Z',
+      },
+    ];
+
+    (globalThis.fetch as unknown as Mock).mockImplementation((url: string) => {
+      if (url === '/api') {
+        return Promise.resolve(
+          mockFetchResponse({ message: 'Test Message from API' })
+        );
+      } else if (url === '/api/comments') {
+        return Promise.resolve(mockFetchResponse({ comments: mockComments }));
+      }
+      return Promise.reject(new Error('Unknown endpoint'));
+    });
+
+    render(<App />);
+
+    // Wait for comments to load
+    await waitFor(() => {
+      expect(screen.getByText('Test User')).toBeInTheDocument();
+      expect(screen.getByText('This is a test comment')).toBeInTheDocument();
     });
   });
 });
