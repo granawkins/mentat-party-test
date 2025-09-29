@@ -1,19 +1,13 @@
 import request from 'supertest';
 import { app } from '../app';
 
-// Access the comments array for testing purposes
-// We need to import it or access it through the app
-let comments: any[];
-
-// Helper function to clear comments before each test
-const clearComments = async () => {
-  // Since comments is not exported, we'll clear it by making a request
-  // and then manually clearing through a test endpoint or by accessing the module
-  // For now, let's create a simple approach by getting current comments and noting the count
-  const response = await request(app).get('/api/comments');
-  comments = response.body.comments;
-  // We'll work around this by adjusting our test expectations
-};
+// Define types for testing
+interface Comment {
+  id: number;
+  text: string;
+  timestamp: string;
+  author: string;
+}
 
 describe('API Endpoints', () => {
   it('should return welcome message on GET /api', async () => {
@@ -32,14 +26,6 @@ describe('API Endpoints', () => {
   });
 
   describe('Comments API', () => {
-    let initialCommentCount: number;
-
-    beforeEach(async () => {
-      // Get the current number of comments to account for test isolation issues
-      const response = await request(app).get('/api/comments');
-      initialCommentCount = response.body.comments.length;
-    });
-
     it('should return comments array on GET /api/comments', async () => {
       const response = await request(app).get('/api/comments');
 
@@ -120,7 +106,7 @@ describe('API Endpoints', () => {
       expect(response.body.comments.length).toBeGreaterThanOrEqual(2);
 
       // Check that our comments are in the array (they might not be the first ones due to other tests)
-      const commentTexts = response.body.comments.map((c: any) => c.text);
+      const commentTexts = response.body.comments.map((c: Comment) => c.text);
       expect(commentTexts).toContain(comment1.text);
       expect(commentTexts).toContain(comment2.text);
     });
